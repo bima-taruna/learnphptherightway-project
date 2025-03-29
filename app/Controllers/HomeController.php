@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -11,5 +11,13 @@ class HomeController
     public function index(): View
     {
         return View::make('index');
+    }
+
+    public function upload()
+    {
+        $filePath = STORAGE_PATH . '/' . $_FILES['transaction']['name'];
+        move_uploaded_file($_FILES['transaction']['tmp_name'], $filePath);
+
+        var_dump(pathinfo($filePath));
     }
 }
