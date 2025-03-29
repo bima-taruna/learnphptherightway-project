@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use App\App;
 use App\Config;
@@ -18,7 +18,8 @@ define('VIEW_PATH', __DIR__ . '/../views');
 $router = new Router();
 
 $router
-    ->get('/', [HomeController::class, 'index']);
+    ->get('/', [HomeController::class, 'index'])
+    ->post('/upload', [\App\Controllers\HomeController::class, 'upload']);
 
 (new App(
     $router,
