@@ -8,6 +8,7 @@ use App\Controllers\HomeController;
 use App\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../app/Helper/helpers.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
@@ -19,7 +20,8 @@ $router = new Router();
 
 $router
     ->get('/', [HomeController::class, 'index'])
-    ->post('/upload', [\App\Controllers\HomeController::class, 'upload']);
+    ->post('/upload', [\App\Controllers\HomeController::class, 'upload'])
+    ->get('/transactions', [\App\Controllers\TransactionController::class, 'index']);
 
 (new App(
     $router,
