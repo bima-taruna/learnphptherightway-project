@@ -15,12 +15,20 @@ class HomeController
 
     public function upload()
     {
-        $filePath = STORAGE_PATH . '/' . $_FILES['transaction']['name'];
-        if (move_uploaded_file($_FILES['transaction']['tmp_name'], $filePath)) {
+        $uploadedFiles = $_FILES['transactions'];
+        $errors = [];
+        foreach ($uploadedFiles['name'] as $index => $filename) {
+            $filePath = STORAGE_PATH . '/' . $filename;
+            if (!move_uploaded_file($uploadedFiles['tmp_name'][$index], $filePath)) {
+                $errors[] = "Failed to upload file : $filename";
+            }
+        }
+        if (empty($errors)) {
             header('Location: /transactions');
             exit;
         } else {
-            echo "File upload failed";
+            echo "File upload failed:<br>";
+            echo implode('<br>', $errors);
         }
     }
 }
