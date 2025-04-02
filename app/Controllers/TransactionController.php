@@ -4,17 +4,40 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Model\InsertTransaction;
+use App\Model\Transaction;
 use App\View;
 
 class TransactionController
 {
+    private Transaction $transactionModel;
+
+    /**
+     * Class constructor.
+     */
+    public function __construct()
+    {
+        $this->transactionModel = new Transaction();
+    }
+
     public function index(): View
     {
         $files = $this->getTransactionFiles(STORAGE_PATH);
         $transactions = [];
-        foreach ($files as $file) {
-            $transactions = array_merge($transactions, $this->getTransactions($file, [$this, 'extractTransaction']));
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $transactions = array_merge($transactions, $this->getTransactions($file, [$this, 'extractTransaction']));
+            }
+            if ((new InsertTransaction($this->transactionModel))->registerBatch($transactions)) {
+                foreach ($files as $file) {
+                    if (file_exists($file)) {
+                        unlink($file);
+                        echo "Deleted: $file\n";
+                    }
+                }
+            }
         }
+        $transactions = $this->transactionModel->getAll();
         $totals = $this->calculateTotals($transactions);
         return View::make('transactions', ['transactions' => $transactions, 'totals' => $totals]);
     }
@@ -62,7 +85,7 @@ class TransactionController
         [$date, $checkNumber, $description, $amount] = $transactionRow;
 
         $amount = (float) str_replace(['$', ','], '', $amount);
-
+        $checkNumber = is_numeric($checkNumber) ? (int) $checkNumber : null;
         return [
             'date'        => $date,
             'checkNumber' => $checkNumber,
