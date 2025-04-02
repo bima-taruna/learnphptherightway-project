@@ -28,7 +28,8 @@ class TransactionController
             foreach ($files as $file) {
                 $transactions = array_merge($transactions, $this->getTransactions($file, [$this, 'extractTransaction']));
             }
-            if ((new InsertTransaction($this->transactionModel))->registerBatch($transactions)) {
+            $insertTransaction = new InsertTransaction($this->transactionModel);
+            if ($insertTransaction->registerBatch($transactions)) {
                 $this->deleteProcessedFiles($files);
             }
         }
