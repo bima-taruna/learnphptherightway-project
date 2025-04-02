@@ -29,12 +29,7 @@ class TransactionController
                 $transactions = array_merge($transactions, $this->getTransactions($file, [$this, 'extractTransaction']));
             }
             if ((new InsertTransaction($this->transactionModel))->registerBatch($transactions)) {
-                foreach ($files as $file) {
-                    if (file_exists($file)) {
-                        unlink($file);
-                        echo "Deleted: $file\n";
-                    }
-                }
+                $this->deleteProcessedFiles($files);
             }
         }
         $transactions = $this->transactionModel->getAll();
@@ -109,5 +104,15 @@ class TransactionController
         }
 
         return $totals;
+    }
+
+    private function deleteProcessedFiles(array $files): void
+    {
+        foreach ($files as $file) {
+            if (file_exists($file)) {
+                unlink($file);
+                echo "Deleted: $file\n";
+            }
+        }
     }
 }
