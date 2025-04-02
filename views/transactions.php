@@ -42,7 +42,7 @@
                 <?php foreach ($transactions as $transaction): ?>
                     <tr>
                         <td><?= formatDate($transaction['date']) ?></td>
-                        <td><?= $transaction['checkNumber'] ?></td>
+                        <td><?= $transaction['check'] ?></td>
                         <td><?= $transaction['description'] ?></td>
                         <td>
                             <?php if ($transaction['amount'] < 0): ?>
